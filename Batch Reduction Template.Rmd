@@ -1,0 +1,76 @@
+---
+title: "Batch Reduce Stable Sr - Template"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+This script is for batch reducing spike Sr data to get delta 88/86Sr and fractionation corrected 87Sr/86Sr
+
+For this to work correctly it's very important that the input raw data tables are formatted as described below; the batch.reduce function differentiates samples using indexing not column names.
+
+--- Necessary Packages + Functions ---
+```{r}
+library(tidyverse)
+library(ggthemes)
+library(googlesheets4)
+source("reduce_functions.R")
+```
+
+
+--- Spike Composition ---
+```{r}
+spike_comp <- tibble(
+  sp_86_84 = 0.051524,
+  sp_87_84 = 0.787050,
+  sp_88_84 = 0.218766,
+)
+```
+
+
+--- Import + Organize Data ---
+
+The final result of this section should be:
+(1) a data-frame of raw spiked data with n_samples*3 columns, organized such that col1 = sample_1 86/84, col2 = sample_1 88/84, col3 = sample_1 87/84, col4 = sample_2 86/84,
+    col5 = sample_2 88/84, ... col(n_samples*3) = sample_n 87/84
+(2) a tibble of unspiked data that has n_samples rows, and two columns, the first being a sample name and the second the mean unspiked 87/86 ratios
+(3) a double of how many samples you're trying to reduce
+
+
+Import from google sheets -- assumes everything is already in the correct format
+```{r}
+### Spiked Data ###
+spiked_data <- read_sheet("")
+
+### Unspiked Data ###
+unspiked_data <- read_sheet("")
+
+### Declare number of samples ### 
+n_samples = 
+```
+
+
+--- Batch Reduce ----
+```{r}
+reduced_data <- batch.reduce(n_samples = n_samples, id_data = spiked_data, ic_data = unspiked_data, spike_comp = spike_comp)
+```
+
+
+
+--- Reduce One Sample (troubleshooting) ---
+```{r}
+
+exp_data <- read_sheet("")
+
+id_86_84 <- exp_data$id_86_84
+id_87_84 <- exp_data$id_87_84
+id_88_84 <- exp_data$id_88_84
+ic_87_86 <- 0.70916581
+
+exp <- get.stable(id_86_84, id_87_84, id_88_84, ic_87_86, spike_comp)
+```
+
+
+
+
+
